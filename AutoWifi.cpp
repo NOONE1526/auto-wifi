@@ -26,7 +26,7 @@ std::vector<int> getSignal() {
     std::vector<std::string> res = spliting(result);
     for (int i = 0; i < res.size(); i++) {
         if (res[i].find("SSID") != std::string::npos) { ctrl = 1; }
-        if (res[i].find("118") != std::string::npos && notZte == 0 && ctrl == 1) {
+        if (res[i].find("FIRST NAME OF WIFI") != std::string::npos && notZte == 0 && ctrl == 1) {
             for (; i < res.size(); i++) {
                 if (res[i].find("Signal") != std::string::npos) {
                     boost::split(temp, res[i], boost::is_any_of(" "));
@@ -37,7 +37,7 @@ std::vector<int> getSignal() {
                 }
             }
         }
-        else if (res[i].find("ZTE-1510") != std::string::npos && zte == 0 && ctrl == 1) {
+        else if (res[i].find("SECOND NAME OF WIFI") != std::string::npos && zte == 0 && ctrl == 1) {
             for (; i < res.size(); i++) {
                 if (res[i].find("Signal") != std::string::npos) {
                     boost::split(temp, res[i], boost::is_any_of(" "));
@@ -59,7 +59,7 @@ std::vector<int> getSignal() {
 }
 
 int logic(std::vector<int> res) {
-    //0 -> connect to 118, 1 -> connect to ZTE-1510
+    //0 -> connect to FIRST WIFI, 1 -> connect to SECOND WIFI
     const char* command = "netsh wlan show interfaces > output.txt";
     std::system(command); 
     std::vector <std::string> out;
@@ -69,8 +69,8 @@ int logic(std::vector<int> res) {
     int var = -1;
     for (int i = 0; i < out.size(); i++) {
         if (out[i].find("SSID") != std::string::npos) {
-            if (out[i].find("ZTE-1510") != std::string::npos) { var = 1; }
-            else if (out[i].find("118") != std::string::npos) { var = 0; }
+            if (out[i].find("SECOND WIFI") != std::string::npos) { var = 1; }
+            else if (out[i].find("FIRST WIFI") != std::string::npos) { var = 0; }
         }
     }
     std::remove("output.txt");
@@ -86,8 +86,8 @@ int main() {
     while ( ctrl ) {
         answer = getSignal();
         int res = logic(answer);
-        if (res == 0) { std::system("netsh wlan connect name=118"); }
-        else if (res == 1) { std::system("netsh wlan connect name=ZTE-1510"); }
+        if (res == 0) { std::system("netsh wlan connect name=FIRST WIFI"); }
+        else if (res == 1) { std::system("netsh wlan connect name=SECOND WIFI"); }
         const auto start = std::chrono::high_resolution_clock::now();
         std::this_thread::sleep_for(2s);
         const auto end = std::chrono::high_resolution_clock::now();
